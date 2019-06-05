@@ -18,5 +18,6 @@
     "require": {
         "guzzlehttp/guzzle": "^6.3",
         "karriere/json-decoder": "^2.2"
-    }
+    },
+    "minimum-stability": "stable"
 }
