@@ -2,8 +2,10 @@
 
 require __DIR__ . "/../vendor/autoload.php";
 
+//Initialize worker
+$data = new SnmpWrapper\WrapperWorker();
 
-$data = new SnmpWrapper\SnmpWrapper();
+//Formate request end sending
 $response = $data->walk([
     (new SnmpWrapper\Request\PoollerRequest())
         ->setIp("10.50.124.132")
