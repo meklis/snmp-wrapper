@@ -16,6 +16,7 @@
         }
     },
     "require": {
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "karriere/json-decoder": "^2.2"
     }
 }

@@ -9,6 +9,12 @@
 namespace SnmpWrapper;
 
 
+use GuzzleHttp\Psr7\Response;
+use Karriere\JsonDecoder\JsonDecoder;
+use Psr\Http\Message\ResponseInterface;
+use SnmpWrapper\Response\PoollerResponse;
+use SnmpWrapper\Response\SnmpResponse;
+
 class WrapperWorker
 {
     protected $wrapperAddress;
@@ -37,7 +43,7 @@ class WrapperWorker
     function get(array $req)
     {
         $data = $this->client->post($this->wrapperAddress . "/api/get", [\GuzzleHttp\RequestOptions::JSON => $req]);
-        return \GuzzleHttp\json_decode($data->getBody()->getContents());
+        return $this->prepareResp($data);
     }
 
     /**
@@ -47,17 +53,17 @@ class WrapperWorker
     function set(array $req)
     {
         $data = $this->client->post($this->wrapperAddress . "/api/set", [\GuzzleHttp\RequestOptions::JSON => $req]);
-        return \GuzzleHttp\json_decode($data->getBody()->getContents());
+        return $this->prepareResp($data);
     }
 
     /**
      * @param Request\PoollerRequest[] $req
      * @return Response\PoollerResponse[]
      */
-    function walk(array $req)
-    {
+    function walk(array $req) {
+
         $data = $this->client->post($this->wrapperAddress . "/api/walk", [ \GuzzleHttp\RequestOptions::JSON => $req]);
-        return \GuzzleHttp\json_decode($data->getBody()->getContents());
+        return $this->prepareResp($data);
     }
 
     /**
@@ -67,7 +73,18 @@ class WrapperWorker
     function walkBulk(array $req)
     {
         $data = $this->client->post($this->wrapperAddress . "/api/bulk_walk", [\GuzzleHttp\RequestOptions::JSON => $req]);
-        return \GuzzleHttp\json_decode($data->getBody()->getContents());
+        return $this->prepareResp($data);
     }
-
+    protected function prepareResp(ResponseInterface $data) {
+        $decoder = new JsonDecoder(true);
+        $result = $decoder->decodeMultiple($data->getBody()->getContents(), PoollerResponse::class);
+        foreach ($result as $num=>$pool) {
+            $responses = [];
+            foreach ($pool->response as $resp) {
+                $responses[] = $decoder->decodeArray($resp, SnmpResponse::class);
+            }
+            $result[$num]->response = $responses;
+        }
+        return $result;
+    }
 }

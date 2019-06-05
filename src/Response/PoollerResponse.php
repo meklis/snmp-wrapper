@@ -35,31 +35,11 @@ class PoollerResponse
     }
 
     /**
-     * @param string $ip
-     * @return PoollerResponse
-     */
-    public function setIp(string $ip): PoollerResponse
-    {
-        $this->ip = $ip;
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function getError(): string
     {
         return $this->error;
-    }
-
-    /**
-     * @param string $error
-     * @return PoollerResponse
-     */
-    public function setError(string $error): PoollerResponse
-    {
-        $this->error = $error;
-        return $this;
     }
 
     /**
@@ -70,15 +50,6 @@ class PoollerResponse
         return $this->oid;
     }
 
-    /**
-     * @param string $oid
-     * @return PoollerResponse
-     */
-    public function setOid(string $oid): PoollerResponse
-    {
-        $this->oid = $oid;
-        return $this;
-    }
 
     /**
      * @return mixed
@@ -86,16 +57,6 @@ class PoollerResponse
     public function getResponse()
     {
         return $this->response;
-    }
-
-    /**
-     * @param mixed $response
-     * @return PoollerResponse
-     */
-    public function setResponse($response)
-    {
-        $this->response = $response;
-        return $this;
     }
 
     /**
@@ -107,18 +68,9 @@ class PoollerResponse
     }
 
     /**
-     * @param bool $from_cache
-     * @return PoollerResponse
-     */
-    public function setFromCache(bool $from_cache): PoollerResponse
-    {
-        $this->from_cache = $from_cache;
-        return $this;
-    }
-    /**
      * @var boolean
      */
-  protected $from_cache;
+     public $from_cache;
 }
 
 

@@ -24,6 +24,11 @@ class SnmpResponse
     public $value;
 
     /**
+     * @var string
+     */
+    public $type;
+
+    /**
      * @return string
      */
     public function getOid(): string
@@ -31,15 +36,6 @@ class SnmpResponse
         return $this->oid;
     }
 
-    /**
-     * @param string $oid
-     * @return SnmpResponse
-     */
-    public function setOid(string $oid): SnmpResponse
-    {
-        $this->oid = $oid;
-        return $this;
-    }
 
     /**
      * @return string
@@ -49,15 +45,6 @@ class SnmpResponse
         return $this->hex_value;
     }
 
-    /**
-     * @param string $hex_value
-     * @return SnmpResponse
-     */
-    public function setHexValue(string $hex_value): SnmpResponse
-    {
-        $this->hex_value = $hex_value;
-        return $this;
-    }
 
     /**
      * @return string
@@ -67,15 +54,6 @@ class SnmpResponse
         return $this->value;
     }
 
-    /**
-     * @param string $value
-     * @return SnmpResponse
-     */
-    public function setValue(string $value): SnmpResponse
-    {
-        $this->value = $value;
-        return $this;
-    }
 
     /**
      * @return string
@@ -85,19 +63,6 @@ class SnmpResponse
         return $this->type;
     }
 
-    /**
-     * @param string $type
-     * @return SnmpResponse
-     */
-    public function setType(string $type): SnmpResponse
-    {
-        $this->type = $type;
-        return $this;
-    }
-    /**
-     * @var string
-     */
-    protected $type;
 }
 /*
 type SnmpResp struct {
