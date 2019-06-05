@@ -1,0 +1,20 @@
+{
+    "name": "meklis/SnmpWrapper",
+    "description": "PHP wrapper for working with helpprovider SnmpWrapper",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Max Boyar",
+            "email": "max.boyar.a@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "SnmpWrapper\\": "src/"
+        }
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    }
+}
