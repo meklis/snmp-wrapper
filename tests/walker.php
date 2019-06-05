@@ -20,4 +20,8 @@ $oids = [
 
 foreach ($walker->walk($oids) as $resp) {
     echo $resp->getIp() . " - " . $resp->getOid() . "\n";
+    foreach ($resp->getResponse() as $snmpResp) {
+        echo "VALUE: {$snmpResp->getType()}, BIN: {$snmpResp->getValueAsBinary()}, HEX: {$snmpResp->getHexValue()}\n";
+        echo "OID: {$snmpResp->getOid()} - {$snmpResp->getOidAsHex()} \n";
+    }
 }

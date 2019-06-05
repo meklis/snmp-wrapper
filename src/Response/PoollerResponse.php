@@ -22,7 +22,7 @@ class PoollerResponse
      */
     public $oid;
     /**
-     * @var []SnmpResponse
+     * @var SnmpResponse[]
      */
     public $response;
 
@@ -52,7 +52,7 @@ class PoollerResponse
 
 
     /**
-     * @return mixed
+     * @return SnmpResponse[]
      */
     public function getResponse()
     {
