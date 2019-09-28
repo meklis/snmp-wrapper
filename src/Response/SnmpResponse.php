@@ -16,20 +16,20 @@ class SnmpResponse
     /**
      * @var string
      */
-    public $oid;
+    public $oid="";
     /**
      * @var string
      */
-    public $hex_value;
+    public $hex_value="";
     /**
      * @var string
      */
-    public $value;
+    public $value ="";
 
     /**
      * @var string
      */
-    public $type;
+    public $type ="";
 
     /**
      * @return string
