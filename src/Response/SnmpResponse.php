@@ -117,7 +117,7 @@ class SnmpResponse
      */
     public function getValue(): string
     {
-        return $this->value;
+        return trim($this->value, '"');
     }
 
 
