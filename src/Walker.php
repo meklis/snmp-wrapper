@@ -23,11 +23,19 @@ class Walker
      * Walker constructor.
      * @param WrapperWorker $wrapper
      */
+
+
     function __construct(WrapperWorker $wrapper)
     {
         $this->wrapper = $wrapper;
     }
 
+    /**
+     * @return bool
+     */
+    function getCacheStatus() {
+        return $this->enableCache;
+    }
     /**
      * @param $ip
      * @return $this
