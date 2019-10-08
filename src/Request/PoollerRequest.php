@@ -144,10 +144,10 @@ class PoollerRequest
     }
 
     /**
-     * @param PoollerRequest $type
+     * @param string $type
      * @return PoollerRequest
      */
-    public function setType(PoollerRequest $type): PoollerRequest
+    public function setType($type): PoollerRequest
     {
         $this->type = $type;
         return $this;
