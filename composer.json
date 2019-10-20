@@ -4,6 +4,7 @@
     "type": "library",
     "version": "1.0",
     "license": "MIT",
+    "type": "library",
     "authors": [
         {
             "name": "Max Boyar",
@@ -19,5 +20,5 @@
         "guzzlehttp/guzzle": "^6.3",
         "karriere/json-decoder": "^2.2"
     },
-    "minimum-stability": "stable"
+    "minimum-stability": "dev"
 }
