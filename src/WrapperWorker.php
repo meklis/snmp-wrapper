@@ -78,8 +78,12 @@ class WrapperWorker
     protected function prepareResp(ResponseInterface $data) {
         $decoder = new JsonDecoder(true);
         $result = $decoder->decodeMultiple($data->getBody()->getContents(), PoollerResponse::class);
+        if ($result->error) {
+            throw new \Exception("Returned error from walker: {$result->error}");
+        }
         foreach ($result as $num=>$pool) {
             $responses = [];
+
             foreach ($pool->response as $resp) {
                 $responses[] = $decoder->decodeArray($resp, SnmpResponse::class);
             }
