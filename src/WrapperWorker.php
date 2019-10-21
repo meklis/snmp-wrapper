@@ -83,8 +83,12 @@ class WrapperWorker
         if(!in_array($data->getStatusCode(), [200,201,400] )) {
             throw new \Exception("Incorrect response from snmp walker: " . $data->getReasonPhrase());
         }
+
         $result = $decoder->decodeMultiple($data->getBody()->getContents(), PoollerResponse::class);
-        if ($result->error) {
+        if(!$result) {
+            throw new \Exception("Error parse object from snmpwalker {$data->getBody()->getContents()}");
+        }
+        if (isset($result->error) && $result->error) {
             throw new \Exception("Returned error from walker: {$result->error}");
         }
         foreach ($result as $num=>$pool) {
