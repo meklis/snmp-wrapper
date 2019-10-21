@@ -88,14 +88,12 @@ class WrapperWorker
         if(!$result) {
             throw new \Exception("Error parse object from snmpwalker {$data->getBody()->getContents()}");
         }
-        if (isset($result->error) && $result->error) {
-            throw new \Exception("Returned error from walker: {$result->error}");
-        }
         foreach ($result as $num=>$pool) {
             $responses = [];
-
-            foreach ($pool->response as $resp) {
-                $responses[] = $decoder->decodeArray($resp, SnmpResponse::class);
+            if(is_array($pool->response)) {
+                foreach ($pool->response as $resp) {
+                    $responses[] = $decoder->decodeArray($resp, SnmpResponse::class);
+                }
             }
             $result[$num]->response = $responses;
         }
