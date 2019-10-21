@@ -18,6 +18,9 @@ use SnmpWrapper\Response\SnmpResponse;
 class WrapperWorker
 {
     protected $wrapperAddress;
+    /**
+     * @var \GuzzleHttp\Client
+     */
     protected $client;
 
     /**
@@ -37,8 +40,8 @@ class WrapperWorker
     }
 
      /**
-      * @param Request\PoollerRequest[] $req
-      * @return Response\PoollerResponse[]
+      * @param \SnmpWrapper\Request\PoollerRequest[] $req
+      * @return \SnmpWrapper\Response\PoollerResponse[]
      */
     function get(array $req)
     {
@@ -47,8 +50,8 @@ class WrapperWorker
     }
 
     /**
-     * @param Request\PoollerRequest[] $req
-     * @return Response\PoollerResponse[]
+     * @param \SnmpWrapper\Request\PoollerRequest[] $req
+     * @return \SnmpWrapper\Response\PoollerResponse[]
      */
     function set(array $req)
     {
@@ -57,8 +60,8 @@ class WrapperWorker
     }
 
     /**
-     * @param Request\PoollerRequest[] $req
-     * @return Response\PoollerResponse[]
+     * @param \SnmpWrapper\PoollerRequest[] $req
+     * @return \SnmpWrapper\PoollerResponse[]
      */
     function walk(array $req) {
 
@@ -67,8 +70,8 @@ class WrapperWorker
     }
 
     /**
-     * @param Request\PoollerRequest[] $req
-     * @return Response\PoollerResponse[]
+     * @param \SnmpWrapper\Request\PoollerRequest[] $req
+     * @return \SnmpWrapper\Response\PoollerResponse[]
      */
     function walkBulk(array $req)
     {
@@ -77,6 +80,9 @@ class WrapperWorker
     }
     protected function prepareResp(ResponseInterface $data) {
         $decoder = new JsonDecoder(true);
+        if(!in_array($data->getStatusCode(), [200,201,400] )) {
+            throw new \Exception("Incorrect response from snmp walker: " . $data->getReasonPhrase());
+        }
         $result = $decoder->decodeMultiple($data->getBody()->getContents(), PoollerResponse::class);
         if ($result->error) {
             throw new \Exception("Returned error from walker: {$result->error}");
