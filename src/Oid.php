@@ -83,4 +83,15 @@ class Oid
         return $this;
     }
 
+   function __construct()
+    {
+    }
+
+    public static function init($oid, $use_cache = false, $type = 'StringValue', $value = "") {
+        return (new self())
+            ->setOid($oid)
+            ->setType($type)
+            ->setValue($value)
+            ->setUseCache($use_cache);
+    }
 }
