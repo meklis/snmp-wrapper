@@ -2,7 +2,6 @@
     "name": "meklis/snmp-wrapper",
     "description": "PHP wrapper for working with helpprovider SnmpWrapper",
     "type": "library",
-    "version": "1.0.2",
     "license": "MIT",
     "authors": [
         {
