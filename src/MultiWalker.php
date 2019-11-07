@@ -121,7 +121,7 @@ class MultiWalker
                 ->setIp($dev->getIp())
                 ->setTimeout($dev->getTimeout())
                 ->setRepeats($dev->getRepeats())
-                ->setType($oid->getValue())
+                ->setType($oid->getType())
                 ->setValue($oid->getValue());
         }
         return $this->wrapper->set($req);
