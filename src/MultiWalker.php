@@ -34,9 +34,11 @@ class MultiWalker
     /**
      * Добавляет в список опроса оборудование, нужно передать обьект Device
      * @param Device $device
+     * @return self
      */
     public function addDevice(Device $device) {
         $this->devices[] = $device;
+        return $this;
     }
 
     public function flushDevices() {
