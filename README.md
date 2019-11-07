@@ -1,7 +1,10 @@
 # SNMP WRAPPER CLIENT
-This library realize PHP client for working with HelpProvider-SnmpWrapper
+Блиблотека для работы с https://github.com/meklis/http-snmpwalk-proxy.
+Позволяет опрашивать оборудование по SNMP, работает только по версии v2(v2c)
 
-## How to usage? 
-You must have HelpProvider-SnmpWrapper working and work with it.
+## Как использовать? 
+Для работы необходимо, что бы был поднят http-snmpwalk-proxy (инструкция - https://github.com/meklis/Switcher)
 
-Examples work in tests
+
+Walker позволяет работать только с одним устройством одновременно;
+MultiWalker позволяет работать одновременно с большим количеством устройств, указать которые можно через методы setDevice(), setDevices()
