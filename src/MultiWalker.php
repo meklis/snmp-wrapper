@@ -10,7 +10,9 @@ namespace SnmpWrapper;
 
 
 
-class MultiWalker
+use SnmpWrapper\Response\PoollerResponse;
+
+class MultiWalker implements MultiWalkerInterface
 {
     /**
      * @var WrapperWorker
@@ -83,9 +85,9 @@ class MultiWalker
 
     /**
      * @param Oid[] $oids
-     * @return Response\PoollerResponse[]
+     * @return PoollerResponse[]
      */
-    function walk($oids) {
+    function walk(array $oids) {
         return $this->wrapper->walk($this->formatRequest($oids));
     }
 
@@ -93,7 +95,7 @@ class MultiWalker
      * @param Oid[] $oids
      * @return Response\PoollerResponse[]
      */
-    function walkBulk($oids) {
+    function walkBulk(array $oids) {
         return $this->wrapper->walkBulk($this->formatRequest($oids));
     }
 
@@ -101,7 +103,7 @@ class MultiWalker
      * @param Oid[] $oids
      * @return Response\PoollerResponse[]
      */
-    function get($oids) {
+    function get(array $oids) {
         return $this->wrapper->get($this->formatRequest($oids));
     }
 

@@ -60,8 +60,8 @@ class WrapperWorker
     }
 
     /**
-     * @param \SnmpWrapper\PoollerRequest[] $req
-     * @return \SnmpWrapper\PoollerResponse[]
+     * @param \SnmpWrapper\Request\PoollerRequest[] $req
+     * @return \SnmpWrapper\Response\PoollerResponse[]
      */
     function walk(array $req) {
 
