@@ -39,6 +39,15 @@ class SnmpResponse
         return $this->oid;
     }
 
+    public static function init($oid, $type, $value, $hex_value = null) {
+        $obj = new self();
+        $obj->oid = $oid;
+        $obj->type = $type;
+        $obj->value = $value;
+        $obj->hex_value = $hex_value;
+        return $obj;
+    }
+
 
     /**
      * @return string

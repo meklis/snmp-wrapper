@@ -60,6 +60,24 @@ class PoollerResponse
     }
 
     /**
+     * @param array $response
+     */
+    public function setResponse(array $response)
+    {
+        $this->response = $response;
+        return $this;
+    }
+
+    public static function init($deviceIp, $oid, $response = null, $error = null) {
+        $obj = new self();
+        $obj->ip = $deviceIp;
+        $obj->oid = $oid;
+        $obj->error = $error;
+        $obj->response = $response;
+        return $obj;
+    }
+
+    /**
      * @return bool
      */
     public function isFromCache(): bool
