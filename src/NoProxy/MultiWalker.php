@@ -38,13 +38,24 @@ class MultiWalker implements MultiWalkerInterface
 
     /**
      * @param Oid[] $oids
+     * @return string[]
+     */
+    private function getOidFromObjs(array $oids) {
+        $ois = [];
+        foreach ($oids as $oid) {
+            $ois[] = $oid->getOid();
+        }
+        return $ois;
+    }
+    /**
+     * @param Oid[] $oids
      * @return PoollerResponse[]
      */
     function walk(array $oids)
     {
         $response = [];
         foreach ($this->devices as $device) {
-            $oidResponses = (new PhpSnmp($device->getIp(), $device->getCommunity(), $device->getTimeout() * 1000, $device->getRepeats()))->multiWalk($oids);
+            $oidResponses = (new PhpSnmp($device->getIp(), $device->getCommunity(), $device->getTimeout() * 1000, $device->getRepeats()))->multiWalk($this->getOidFromObjs($oids));
             foreach ($oidResponses as $data) {
                 $pooller = PoollerResponse::init($device->getIp(), $data['oid'], null, $data['error']);
                 if (!$data['error']) {
@@ -89,7 +100,7 @@ class MultiWalker implements MultiWalkerInterface
     {
         $response = [];
         foreach ($this->devices as $device) {
-            $oidResponses = (new PhpSnmp($device->getIp(), $device->getCommunity(), $device->getTimeout() * 1000, $device->getRepeats()))->multiGet($oids);
+            $oidResponses = (new PhpSnmp($device->getIp(), $device->getCommunity(), $device->getTimeout() * 1000, $device->getRepeats()))->multiGet($this->getOidFromObjs($oids));
             foreach ($oidResponses as $data) {
                 $pooller = PoollerResponse::init($device->getIp(), $data['oid'], null, $data['error']);
                 if (!$data['error']) {
