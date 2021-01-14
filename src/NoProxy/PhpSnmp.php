@@ -8,7 +8,12 @@ class PhpSnmp implements SnmpInterface
 {
     protected $snmp;
     protected $types = [
-        2 => 'INTEGER',
+        2 => 'Integer',
+        4 => 'String',
+        6 => 'OID',
+        65 => 'Integer',
+        67 => 'Timeticks',
+        70 => 'Counters64',
     ];
     const SET_TYPE_INTEGER = 'i';
     const SET_TYPE_STRING = 's';
@@ -34,6 +39,7 @@ class PhpSnmp implements SnmpInterface
         $snmp->quick_print = true;
         $snmp->oid_increasing_check = false;
         $snmp->valueretrieval = SNMP_VALUE_OBJECT;
+        $snmp->exceptions_enabled = \SNMP::ERRNO_ANY;
         $this->snmp = $snmp;
     }
 
@@ -50,6 +56,9 @@ class PhpSnmp implements SnmpInterface
             throw new \Exception($this->snmp->getError(), $this->snmp->getErrno());
         }
         foreach ($objs as $oid => $obj) {
+            if($obj->type == 67) {
+                $obj->value  = $this->parseTimeTicks($obj->value);
+            }
             $response[] = [
                 'oid' => $oid,
                 'type' => $this->types[$obj->type],
@@ -58,7 +67,19 @@ class PhpSnmp implements SnmpInterface
         }
         return $response;
     }
+    private function parseTimeTicks($timetick) {
 
+        $data = explode(":", $timetick);
+        return
+            //Дни
+            100 * (($data[0] * 24 * 60 * 60) +
+            //Часы
+            ($data[1] * 60 * 60) +
+            //Минуты
+            ($data[2] * 60) +
+            //Секунды
+            ((int)$data[3]) );
+    }
     /**
      * @param array $oids
      * @return array
@@ -95,6 +116,10 @@ class PhpSnmp implements SnmpInterface
         if (!$obj) {
             throw new \Exception($this->snmp->getError(), $this->snmp->getErrno());
         }
+
+        if($obj->type == 67) {
+            $obj->value  = $this->parseTimeTicks($obj->value);
+        }
         return [
             'oid' => $oid,
             'type' => $this->types[$obj->type],
@@ -120,8 +145,9 @@ class PhpSnmp implements SnmpInterface
                 $err = $e;
             }
             $resp[] = [
-                'oid' => $oid,
-                'type' => $this->types[$obj['type']],
+                '_oid' => $oid,
+                'oid' => $obj['oid'],
+                'type' => $obj['type'],
                 'value' => $obj['value'],
                 'error' => $err,
             ];
@@ -139,10 +165,16 @@ class PhpSnmp implements SnmpInterface
      */
     function set(string $oid, string $type, $value)
     {
-       if(!@$this->snmp->set($oid, $type, $value)) {
-           throw new \Exception($this->snmp->getError(), $this->snmp->getErrno());
-       }
-       return $this;
+        set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) {
+            // error was suppressed with the @-operator
+            if (0 === error_reporting()) {
+                return false;
+            }
+            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+        });
+        $this->snmp->set($oid, $type, $value);
+        restore_error_handler();
+        return $this;
     }
 
 }

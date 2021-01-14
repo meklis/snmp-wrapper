@@ -101,12 +101,11 @@ class MultiWalker implements MultiWalkerInterface
         $response = [];
         foreach ($this->devices as $device) {
             $oidResponses = (new PhpSnmp($device->getIp(), $device->getCommunity(), $device->getTimeout() * 1000, $device->getRepeats()))->multiGet($this->getOidFromObjs($oids));
+
             foreach ($oidResponses as $data) {
                 $pooller = PoollerResponse::init($device->getIp(), $data['oid'], null, $data['error']);
                 if (!$data['error']) {
-                    $snmpResponses = [];
-                    $snmpResponses[] = SnmpResponse::init($data['oid'], $data['type'], $data['value'], $this->wrapStrToHex($data['value']));
-                    $pooller->setResponse($snmpResponses);
+                    $pooller->setResponse([SnmpResponse::init($data['oid'], $data['type'], $data['value'], $this->wrapStrToHex($data['value']))]);
                 }
                 $response[] = $pooller;
             }
@@ -119,13 +118,19 @@ class MultiWalker implements MultiWalkerInterface
         $response = [];
         foreach ($this->devices as $device) {
             try {
-                (new PhpSnmp($device->getIp(), $device->getCommunity(), $device->getTimeout() * 1000, $device->getRepeats()))->set($oid->getOid(), $oid->getType(), $oid->getValue());
-                $response[] = PoollerResponse::init($device->getIp(), $oid->getOid(), SnmpResponse::init(
+                $type = null;
+                switch($oid->getType()) {
+                    case 'Integer': $type = PhpSnmp::SET_TYPE_INTEGER; break;
+                    default: $type = PhpSnmp::SET_TYPE_STRING;
+                }
+                (new PhpSnmp($device->getIp(), $device->getCommunity(), $device->getTimeout() * 1000, $device->getRepeats()))
+                    ->set($oid->getOid(), $type, $oid->getValue());
+                $response[] = PoollerResponse::init($device->getIp(), $oid->getOid(), [SnmpResponse::init(
                     $oid->getOid(),
                     $oid->getType(),
                     $oid->getValue(),
                     $this->wrapStrToHex($oid->getValue())
-                ));
+                )]);
             } catch (\Exception $e) {
                 $response[] = PoollerResponse::init($device->getIp(), $oid->getOid(), null, $e->getMessage());
             }
