@@ -71,13 +71,26 @@ class MultiWalker implements MultiWalkerInterface
         return $response;
     }
 
+
+    function isHex($str) {
+        $str = str_replace(["\'","\"","\n", " ", "-", ":", "\t"], '', $str);
+        return preg_match('/^[[:xdigit:]]{1,}$/', $str);
+    }
+
+    /**
+     * @param $val
+     * @return string
+     */
     private function wrapStrToHex($val)
     {
-        $hx = '';
-        if(is_numeric($val)) {
-            $hx =  strtoupper(dechex($val));
+        if($this->isHex($val)) {
+            $hx = str_replace(["\'","\"","\n", " ", "-", ":", "\t"], '', $val);
+        } else {
+            if (is_numeric($val)) {
+                $val = strtoupper(dechex($val));
+            }
+            $hx = strtoupper(bin2hex($val));
         }
-        $hx  = strtoupper(bin2hex($val));
         $result = '';
         $lims = 0;
         foreach (str_split ($hx) as $h) {

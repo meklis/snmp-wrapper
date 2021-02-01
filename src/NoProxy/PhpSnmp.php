@@ -62,7 +62,7 @@ class PhpSnmp implements SnmpInterface
             $response[] = [
                 'oid' => $oid,
                 'type' => $this->types[$obj->type],
-                'value' => $obj->value,
+                'value' => trim($obj->value, '"'),
             ];
         }
         return $response;
@@ -73,12 +73,12 @@ class PhpSnmp implements SnmpInterface
         return
             //Дни
             100 * (($data[0] * 24 * 60 * 60) +
-            //Часы
-            ($data[1] * 60 * 60) +
-            //Минуты
-            ($data[2] * 60) +
-            //Секунды
-            ((int)$data[3]) );
+                //Часы
+                ($data[1] * 60 * 60) +
+                //Минуты
+                ($data[2] * 60) +
+                //Секунды
+                ((int)$data[3]) );
     }
     /**
      * @param array $oids
@@ -123,7 +123,7 @@ class PhpSnmp implements SnmpInterface
         return [
             'oid' => $oid,
             'type' => $this->types[$obj->type],
-            'value' => $obj->value,
+            'value' => trim($obj->value, '"'),
         ];
     }
 
