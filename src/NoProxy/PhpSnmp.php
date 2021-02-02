@@ -12,6 +12,7 @@ class PhpSnmp implements SnmpInterface
         4 => 'String',
         6 => 'OID',
         65 => 'Integer',
+        66 => 'Integer',
         67 => 'Timeticks',
         70 => 'Counters64',
     ];
