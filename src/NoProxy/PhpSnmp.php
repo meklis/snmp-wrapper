@@ -141,16 +141,25 @@ class PhpSnmp implements SnmpInterface
             $err = null;
             try {
                 $obj = $this->get($oid);
+                $resp[] = [
+                    '_oid' => $obj['oid'],
+                    'oid' => $obj['oid'],
+                    'type' => $obj['type'],
+                    'value' => $obj['value'],
+                    'error' => $err,
+                ];
             } catch (\Exception $e) {
                 $err = $e;
+                $resp[] = [
+                    '_oid' => $oid,
+                    'oid' => null,
+                    'type' => null ,
+                    'value' => null,
+                    'error' => $err,
+                ];
             }
-            $resp[] = [
-                '_oid' => $oid,
-                'oid' => $obj['oid'],
-                'type' => $obj['type'],
-                'value' => $obj['value'],
-                'error' => $err,
-            ];
+
+
         }
         return $resp;
 
