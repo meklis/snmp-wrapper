@@ -66,11 +66,11 @@ class SnmpResponse
         if(!is_numeric($timetrics)) {
             throw new \Exception("'$timetrics' is non-numeric value");
         }
-        $days = floor($timetrics/ 8640000   );
-        $hours = floor(($timetrics - (8640000    * $days)) / 360000 );
-        $minutes = floor(($timetrics - (8640000  * $days) - (360000 * $hours) ) / 6000 );
-        $seconds = floor( ($timetrics - (8640000  * $days) - (360000 * $hours)- (6000 * $minutes)) / 100 );
-        $started = date("Y-m-d H:i:s", time() - $timetrics/100);
+        $days = floor($timetrics/ 86400   );
+        $hours = floor(($timetrics - (86400   * $days)) / 3600 );
+        $minutes = floor(($timetrics - (86400 * $days) - (3600 * $hours) ) / 60 );
+        $seconds = floor( ($timetrics - (86400  * $days) - (3600 * $hours)- (60 * $minutes)) );
+        $started = date("Y-m-d H:i:s", time() - $timetrics);
         switch ($format) {
             case self::TIMETICS:  return $timetrics;
             case self::HUMANIZE_DURATION:  return "{$days}d {$hours}h {$minutes}min {$seconds}sec";
