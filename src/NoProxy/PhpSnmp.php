@@ -73,7 +73,7 @@ class PhpSnmp implements SnmpInterface
         $data = explode(":", $timetick);
         return
             //Дни
-            100 * (($data[0] * 24 * 60 * 60) +
+              (($data[0] * 24 * 60 * 60) +
                 //Часы
                 ($data[1] * 60 * 60) +
                 //Минуты
