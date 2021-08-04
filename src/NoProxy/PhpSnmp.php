@@ -61,6 +61,9 @@ class PhpSnmp implements SnmpInterface
             if($obj->type == 67) {
                 $obj->value  = $this->parseTimeTicks($obj->value);
             }
+            if(in_array($obj->type, [2,65,66,70])) {
+                $obj->value = (int) filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
+            }
             $response[] = [
                 'oid' => $oid,
                 'type' => $this->types[$obj->type],
@@ -122,6 +125,10 @@ class PhpSnmp implements SnmpInterface
         if($obj->type == 67) {
             $obj->value  = $this->parseTimeTicks($obj->value);
         }
+        if(in_array($obj->type, [2,65,66,70])) {
+            $obj->value = (int) filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
+        }
+        
         return [
             'oid' => $oid,
             'type' => $this->types[$obj->type],
