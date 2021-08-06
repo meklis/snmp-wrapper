@@ -43,8 +43,12 @@ class WrapperWorker
       * @param \SnmpWrapper\Request\PoollerRequest[] $req
       * @return \SnmpWrapper\Response\PoollerResponse[]
      */
-    function get(array $req)
+    function get(array $req, $timeoutSec = null, $repeats = null)
     {
+        foreach ($req as $r) {
+            if($timeoutSec) $r->setTimeout($timeoutSec);
+            if($repeats) $r->setRepeats($repeats);
+        }
         $data = $this->client->post($this->wrapperAddress . "/api/get", [\GuzzleHttp\RequestOptions::JSON => $req]);
         return $this->prepareResp($data);
     }
@@ -63,8 +67,11 @@ class WrapperWorker
      * @param \SnmpWrapper\Request\PoollerRequest[] $req
      * @return \SnmpWrapper\Response\PoollerResponse[]
      */
-    function walk(array $req) {
-
+    function walk(array $req, $timeoutSec = null, $repeats = null) {
+        foreach ($req as $r) {
+            if($timeoutSec) $r->setTimeout($timeoutSec);
+            if($repeats) $r->setRepeats($repeats);
+        }
         $data = $this->client->post($this->wrapperAddress . "/api/walk", [ \GuzzleHttp\RequestOptions::JSON => $req]);
         return $this->prepareResp($data);
     }
@@ -73,8 +80,11 @@ class WrapperWorker
      * @param \SnmpWrapper\Request\PoollerRequest[] $req
      * @return \SnmpWrapper\Response\PoollerResponse[]
      */
-    function walkBulk(array $req)
-    {
+    function walkBulk(array $req, $timeoutSec = null, $repeats = null)
+    {        foreach ($req as $r) {
+        if($timeoutSec) $r->setTimeout($timeoutSec);
+        if($repeats) $r->setRepeats($repeats);
+    }
         $data = $this->client->post($this->wrapperAddress . "/api/bulk_walk", [\GuzzleHttp\RequestOptions::JSON => $req]);
         return $this->prepareResp($data);
     }

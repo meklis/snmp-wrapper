@@ -87,24 +87,24 @@ class MultiWalker implements MultiWalkerInterface
      * @param Oid[] $oids
      * @return PoollerResponse[]
      */
-    function walk(array $oids) {
-        return $this->wrapper->walk($this->formatRequest($oids));
+    function walk(array $oids, $timeoutSec = null, $repeats = null) {
+        return $this->wrapper->walk($this->formatRequest($oids), $timeoutSec, $repeats);
     }
 
     /**
      * @param Oid[] $oids
      * @return Response\PoollerResponse[]
      */
-    function walkBulk(array $oids) {
-        return $this->wrapper->walkBulk($this->formatRequest($oids));
+    function walkBulk(array $oids, $timeoutSec = null, $repeats = null) {
+        return $this->wrapper->walkBulk($this->formatRequest($oids), $timeoutSec, $repeats);
     }
 
     /**
      * @param Oid[] $oids
      * @return Response\PoollerResponse[]
      */
-    function get(array $oids) {
-        return $this->wrapper->get($this->formatRequest($oids));
+    function get(array $oids, $timeoutSec = null, $repeats = null) {
+        return $this->wrapper->get($this->formatRequest($oids), $timeoutSec, $repeats);
     }
 
     /**
@@ -113,7 +113,7 @@ class MultiWalker implements MultiWalkerInterface
      * @param string|integer $value
      * @return Response\PoollerResponse[]
      */
-    function set(Oid $oid) {
+    function set(Oid $oid, $timeoutSec = null, $repeats = null) {
         $req = [];
         foreach ($this->devices as $dev) {
             $req[] = (new Request\PoollerRequest())
@@ -121,8 +121,8 @@ class MultiWalker implements MultiWalkerInterface
                 ->setUseCache($oid->getUseCache())
                 ->setCommunity($dev->getCommunity())
                 ->setIp($dev->getIp())
-                ->setTimeout($dev->getTimeout())
-                ->setRepeats($dev->getRepeats())
+                ->setTimeout($timeoutSec !== null ? $timeoutSec : $dev->getTimeout())
+                ->setRepeats($repeats !== null ? $repeats : $dev->getRepeats())
                 ->setType($oid->getType())
                 ->setValue($oid->getValue());
         }

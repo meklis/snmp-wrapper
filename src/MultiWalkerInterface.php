@@ -30,23 +30,23 @@ interface MultiWalkerInterface
      * @param Oid[] $oids
      * @return PoollerResponse[]
      */
-    function walk(array $oids);
+    function walk(array $oids, $timeoutSec = null, $repeats = null);
 
     /**
      * @param Oid[] $oids
      * @return PoollerResponse[]
      */
-    function walkBulk(array $oids);
+    function walkBulk(array $oids, $timeoutSec = null, $repeats = null);
 
     /**
      * @param Oid[] $oids
      * @return PoollerResponse[]
      */
-    function get(array $oids);
+    function get(array $oids, $timeoutSec = null, $repeats = null);
 
     /**
      * @param Oid $oid
      * @return PoollerResponse[]
      */
-    function set(Oid $oid);
+    function set(Oid $oid, $timeoutSec = null, $repeats = null);
 }
