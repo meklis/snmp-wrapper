@@ -38,6 +38,7 @@ class PhpSnmp implements SnmpInterface
         $snmp = new \SNMP(\SNMP::VERSION_2C, $ip, $community, $timeout_ms, $retries);
         $snmp->oid_output_format = SNMP_OID_OUTPUT_NUMERIC;
         $snmp->quick_print = true;
+        $snmp->enum_print = true;
         $snmp->oid_increasing_check = false;
         $snmp->valueretrieval = SNMP_VALUE_OBJECT;
         $snmp->exceptions_enabled = \SNMP::ERRNO_ANY;
@@ -59,6 +60,9 @@ class PhpSnmp implements SnmpInterface
         foreach ($objs as $oid => $obj) {
             if($obj->type == 67) {
                 $obj->value  = $this->parseTimeTicks($obj->value);
+            }
+            if(in_array($obj->type, [2,65,66,70])) {
+                $obj->value = (int) filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
             }
             $response[] = [
                 'oid' => $oid,
@@ -121,6 +125,10 @@ class PhpSnmp implements SnmpInterface
         if($obj->type == 67) {
             $obj->value  = $this->parseTimeTicks($obj->value);
         }
+        if(in_array($obj->type, [2,65,66,70])) {
+            $obj->value = (int) filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
+        }
+        
         return [
             'oid' => $oid,
             'type' => $this->types[$obj->type],
