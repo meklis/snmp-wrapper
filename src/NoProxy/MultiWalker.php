@@ -120,6 +120,7 @@ class MultiWalker implements MultiWalkerInterface
             $oidResponses = (new PhpSnmp($device->getIp(), $device->getCommunity(), $timeout * 1000, $countRepeats))->multiGet($this->getOidFromObjs($oids));
 
             foreach ($oidResponses as $data) {
+                if(!$data['oid']) $data['oid'] = $data['_oid'];
                 $pooller = PoollerResponse::init($device->getIp(), $data['oid'], null, $data['error']);
                 if (!$data['error']) {
                     $pooller->setResponse([SnmpResponse::init($data['oid'], $data['type'], $data['value'], $this->wrapStrToHex($data['value']))]);
