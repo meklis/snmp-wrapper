@@ -15,7 +15,7 @@
         }
     },
     "require": {
-        "guzzlehttp/guzzle": "^6.5",
+        "guzzlehttp/guzzle": "dev-master",
         "karriere/json-decoder": "^2.2"
     },
     "minimum-stability": "dev"
