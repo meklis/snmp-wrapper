@@ -9,6 +9,7 @@ use SnmpWrapper\MultiWalkerInterface;
 use SnmpWrapper\Oid;
 use SnmpWrapper\Response\PoollerResponse;
 use SnmpWrapper\Response\SnmpResponse;
+use SnmpWrapper\SnmpT\SnmpT;
 
 class MultiWalker implements MultiWalkerInterface
 {
@@ -157,5 +158,28 @@ class MultiWalker implements MultiWalkerInterface
         }
         return $response;
     }
+
+    function walkNext(array $oids, $timeoutSec = null, $repeats = null)
+    {
+        $response = [];
+        foreach ($this->devices as $device) {
+            $timeout = $timeoutSec !== null ? $timeoutSec : $device->getTimeout();
+            $countRepeats = $repeats !== null ? $repeats : $device->getRepeats();
+            $oidResponses = (new PhpSnmp($device->getIp(), $device->getCommunity(), $timeout * 1000, $countRepeats))->multiWalkNext($this->getOidFromObjs($oids));
+            foreach ($oidResponses as $data) {
+                $pooller = PoollerResponse::init($device->getIp(), $data['oid'], null, $data['error']);
+                if (!$data['error']) {
+                    $snmpResponses = [];
+                    foreach ($data['response'] as $resp) {
+                        $snmpResponses[] = SnmpResponse::init($resp['oid'], $resp['type'], $resp['value'], $this->wrapStrToHex($resp['value']));
+                    }
+                    $pooller->setResponse($snmpResponses);
+                }
+                $response[] = $pooller;
+            }
+        }
+        return $response;
+    }
+
 
 }

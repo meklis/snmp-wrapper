@@ -72,7 +72,7 @@ class WrapperWorker
             if($timeoutSec) $r->setTimeout($timeoutSec);
             if($repeats) $r->setRepeats($repeats);
         }
-        $data = $this->client->post($this->wrapperAddress . "/api/walk", [ \GuzzleHttp\RequestOptions::JSON => $req]);
+        $data = $this->client->post($this->wrapperAddress . "/api/bulk_walk", [ \GuzzleHttp\RequestOptions::JSON => $req]);
         return $this->prepareResp($data);
     }
 

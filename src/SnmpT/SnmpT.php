@@ -38,7 +38,7 @@ class SnmpT
      */
     function walk(string $oid)
     {
-        return $this->_exec("walk", $oid);
+        return $this->_exec("bulk-walk", $oid);
     }
     /**
      * @param array $oids

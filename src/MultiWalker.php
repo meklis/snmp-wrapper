@@ -128,4 +128,10 @@ class MultiWalker implements MultiWalkerInterface
         }
         return $this->wrapper->set($req);
     }
+
+    function walkNext(array $oids, $timoutSec = null, $repeats = null)
+    {
+       return $this->walk($oids, $timoutSec, $repeats);
+    }
+
 }

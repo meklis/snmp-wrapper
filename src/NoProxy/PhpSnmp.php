@@ -6,7 +6,6 @@ namespace SnmpWrapper\NoProxy;
 
 class PhpSnmp implements SnmpInterface
 {
-    protected $snmp;
     protected $types = [
         2 => 'Integer',
         4 => 'String',
@@ -18,6 +17,11 @@ class PhpSnmp implements SnmpInterface
     ];
     const SET_TYPE_INTEGER = 'i';
     const SET_TYPE_STRING = 's';
+
+    protected $ip;
+    protected $community;
+    protected $timeoutMs;
+    protected $retries;
 
     /**
      * PhpSnmp constructor.
@@ -35,14 +39,21 @@ class PhpSnmp implements SnmpInterface
         if (!$retries) {
             $retries = -1;
         }
-        $snmp = new \SNMP(\SNMP::VERSION_2C, $ip, $community, $timeout_ms, $retries);
+        $this->ip = $ip;
+        $this->community = $community;
+        $this->timeoutMs = $timeout_ms;
+        $this->retries = $retries;
+    }
+
+    public function getSnmp() {
+        $snmp = new \SNMP(\SNMP::VERSION_2C, $this->ip, $this->community, $this->timeoutMs, $this->retries);
         $snmp->oid_output_format = SNMP_OID_OUTPUT_NUMERIC;
         $snmp->quick_print = true;
         $snmp->enum_print = true;
-        $snmp->oid_increasing_check = false;
+        $snmp->oid_increasing_check = true;
         $snmp->valueretrieval = SNMP_VALUE_OBJECT;
         $snmp->exceptions_enabled = \SNMP::ERRNO_ANY;
-        $this->snmp = $snmp;
+        return $snmp;
     }
 
     /**
@@ -50,12 +61,43 @@ class PhpSnmp implements SnmpInterface
      * @return array
      * @throws \Exception
      */
-    function walk(string $oid)
+    function walkNext(string $oid, $checkNext = true)
     {
         $response = [];
-        $objs = @$this->snmp->walk($oid);
+        $firstOid = $oid;
+        $snmp = $this->getSnmp();
+        while ($objs = $snmp->getnext([$oid])) {
+            foreach ($objs as $oid => $obj) {
+                if($checkNext && strpos($oid, $firstOid) === false) {
+                    break(2);
+                }
+                if ($obj->type == 67) {
+                    $obj->value = $this->parseTimeTicks($obj->value);
+                }
+                if (in_array($obj->type, [2, 65, 66, 70])) {
+                    $obj->value = (int)filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
+                }
+                $response[] = [
+                    'oid' => $oid,
+                    'type' => $this->types[$obj->type],
+                    'value' => trim($obj->value, '"'),
+                ];
+            }
+        }
+        return $response;
+    }
+    /**
+     * @param string $oid
+     * @return array
+     * @throws \Exception
+     */
+    function walk(string $oid)
+    {
+        $snmp = $this->getSnmp();
+        $response = [];
+        $objs = @$snmp->walk($oid);
         if (!$objs) {
-            throw new \Exception($this->snmp->getError(), $this->snmp->getErrno());
+            throw new \Exception($snmp->getError(), $snmp->getErrno());
         }
         foreach ($objs as $oid => $obj) {
             if($obj->type == 67) {
@@ -70,8 +112,10 @@ class PhpSnmp implements SnmpInterface
                 'value' => trim($obj->value, '"'),
             ];
         }
+        $snmp->close();
         return $response;
     }
+
     private function parseTimeTicks($timetick) {
 
         $data = explode(":", $timetick);
@@ -109,6 +153,30 @@ class PhpSnmp implements SnmpInterface
         return $resp;
     }
 
+    /**
+     * @param array $oids
+     * @return array
+     */
+    function multiWalkNext(array $oids)
+    {
+        $resp = [];
+        foreach ($oids as $oid) {
+            $response = null;
+            $err = null;
+            try {
+                $response = $this->walkNext($oid);
+            } catch (\Exception $e) {
+                $err = $e;
+            }
+            $resp[] = [
+                'oid' => $oid,
+                'response' => $response,
+                'error' => $err,
+            ];
+        }
+        return $resp;
+    }
+
 
     /**
      * @param string $oid
@@ -117,9 +185,10 @@ class PhpSnmp implements SnmpInterface
      */
     function get(string $oid)
     {
-        $obj = @$this->snmp->get($oid);
+        $snmp = $this->getSnmp();
+        $obj = @$snmp->get($oid);
         if (!$obj) {
-            throw new \Exception($this->snmp->getError(), $this->snmp->getErrno());
+            throw new \Exception($snmp->getError(), $snmp->getErrno());
         }
 
         if($obj->type == 67) {
@@ -128,7 +197,7 @@ class PhpSnmp implements SnmpInterface
         if(in_array($obj->type, [2,65,66,70])) {
             $obj->value = (int) filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
         }
-        
+        $snmp->close();
         return [
             'oid' => $oid,
             'type' => $this->types[$obj->type],
@@ -143,7 +212,7 @@ class PhpSnmp implements SnmpInterface
      */
     function multiGet(array $oids)
     {
-
+        $snmp = $this->getSnmp();
         $resp = [];
         foreach ($oids as $oid) {
             $response = null;
@@ -167,11 +236,9 @@ class PhpSnmp implements SnmpInterface
                     'error' => $err,
                 ];
             }
-
-
         }
+        $snmp->close();
         return $resp;
-
     }
 
     /**
@@ -190,7 +257,9 @@ class PhpSnmp implements SnmpInterface
             }
             throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
         });
-        $this->snmp->set($oid, $type, $value);
+        $snmp = $this->getSnmp();
+        $snmp->set($oid, $type, $value);
+        $snmp->close();
         restore_error_handler();
         return $this;
     }

@@ -125,4 +125,27 @@ class MultiWalker implements MultiWalkerInterface
         return $response;
     }
 
+    function walkNext(array $oids, $timeoutSec = null, $repeats = null)
+    {
+        $response = [];
+        foreach ($this->devices as $device) {
+            $timeout = $timeoutSec !== null ? $timeoutSec : $device->getTimeout();
+            $countRepeats = $repeats !== null ? $repeats : $device->getRepeats();
+            $oidResponses = (new SnmpT($device->getIp(), $device->getCommunity(), $timeout , $countRepeats))->multiWalk($this->getOidFromObjs($oids));
+            foreach ($oidResponses as $data) {
+                $pooller = PoollerResponse::init($device->getIp(), $data['oid'], null, $data['error']);
+                if (!$data['error']) {
+                    $snmpResponses = [];
+                    foreach ($data['response'] as $resp) {
+                        $snmpResponses[] = SnmpResponse::init($resp['oid'], $resp['type'], $resp['value'], $resp['hex_value']);
+                    }
+                    $pooller->setResponse($snmpResponses);
+                }
+                $response[] = $pooller;
+            }
+        }
+        return $response;
+    }
+
+
 }
