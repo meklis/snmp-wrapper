@@ -20,10 +20,10 @@
     },
     "scripts": {
         "post-update-cmd": [
-            "php -r \"exec('chmod +x ./src/SnmpT/snmpt');\""
+            "php -r \"exec('chmod +x \". __DIR__ .\",/src/SnmpT/snmpt');\""
         ],
         "post-install-cmd": [
-            "php -r \"exec('chmod +x ./src/SnmpT/snmpt');\""
+            "php -r \"exec('chmod +x \". __DIR__ .\",/src/SnmpT/snmpt');\""
         ]
     },
     "minimum-stability": "dev"
