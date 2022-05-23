@@ -22,7 +22,7 @@ class SnmpT
      * @param string $community
      * @param int|null $timeout
      */
-    public function __construct(string $ip, string $community, int $timeout_sec = null, $retries = null)
+    public function __construct(string $ip, string $community, int $timeout_sec = 2, $retries = 2)
     {
         $this->path = __DIR__ . '/snmpt';
         $this->ip = $ip;
@@ -124,13 +124,7 @@ class SnmpT
      */
     function set(string $oid, string $type, $value)
     {
-        set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) {
-            // error was suppressed with the @-operator
-            if (0 === error_reporting()) {
-                return false;
-            }
-            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-        });
+
         $this->_exec("set", $oid, $type, $value);
         restore_error_handler();
         return $this;
