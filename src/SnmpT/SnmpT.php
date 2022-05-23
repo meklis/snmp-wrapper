@@ -140,7 +140,7 @@ class SnmpT
 
     function _exec($command, $oid, $type = "", $value = "") {
         if(!is_executable($this->path)) {
-            exec("chmod +x {$this->path}");
+           throw new \Exception("{$this->path} not executable. Please run chmod +x {$this->path}");
         }
         $output = "";
         $code = 0;

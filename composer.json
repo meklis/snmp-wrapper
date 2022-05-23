@@ -18,5 +18,10 @@
         "guzzlehttp/guzzle": "dev-master",
         "karriere/json-decoder": "^2.2"
     },
+    "scripts": {
+        "post-install-cmd": [
+            "php -r \"exec('chmod +x ./src/SnmpT/snmpt');\""
+        ]
+    },
     "minimum-stability": "dev"
 }
