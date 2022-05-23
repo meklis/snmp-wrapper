@@ -19,6 +19,9 @@
         "karriere/json-decoder": "^2.2"
     },
     "scripts": {
+        "post-update-cmd": [
+            "php -r \"exec('chmod +x ./src/SnmpT/snmpt');\""
+        ],
         "post-install-cmd": [
             "php -r \"exec('chmod +x ./src/SnmpT/snmpt');\""
         ]
