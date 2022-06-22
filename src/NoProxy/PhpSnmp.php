@@ -34,7 +34,7 @@ class PhpSnmp implements SnmpInterface
         if (!$timeout_ms) {
             $timeout_ms = -1;
         } else {
-            $timeout_ms *= 1000;
+            $timeout_ms *= 1000000;
         }
         if (!$retries) {
             $retries = -1;
