@@ -35,9 +35,9 @@ class PoollerResponse
     }
 
     /**
-     * @return string
+     * @return string | null
      */
-    public function getError(): string
+    public function getError(): ?string
     {
         return $this->error;
     }
