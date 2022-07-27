@@ -86,7 +86,9 @@ class MultiWalker implements MultiWalkerInterface
      */
     private function wrapStrToHex($val)
     {
-        if($this->isHex($val)) {
+        if(is_numeric($val)) {
+            $hx = strtoupper(bin2hex($val));
+        } elseif ($this->isHex($val)) {
             $hx = str_replace(["\'","\"","\n", " ", "-", ":", "\t"], '', $val);
         } else {
             if (is_numeric($val)) {
