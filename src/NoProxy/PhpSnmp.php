@@ -14,6 +14,7 @@ class PhpSnmp implements SnmpInterface
         66 => 'Integer',
         67 => 'Timeticks',
         70 => 'Counters64',
+        64 => 'IpAddress',
     ];
     const SET_TYPE_INTEGER = 'i';
     const SET_TYPE_STRING = 's';
