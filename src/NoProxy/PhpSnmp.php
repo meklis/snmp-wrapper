@@ -23,13 +23,15 @@ class PhpSnmp implements SnmpInterface
     protected $timeoutMs;
     protected $retries;
 
+    protected $port = 161;
+
     /**
      * PhpSnmp constructor.
      * @param string $ip
      * @param string $community
      * @param int|null $timeout
      */
-    public function __construct(string $ip, string $community, int $timeout_ms = null, $retries = null)
+    public function __construct(string $ip, string $community, int $timeout_ms = null, $retries = null, $port = null)
     {
         if (!$timeout_ms) {
             $timeout_ms = -1;
@@ -39,13 +41,17 @@ class PhpSnmp implements SnmpInterface
         if (!$retries) {
             $retries = -1;
         }
+        if ($port) {
+            $this->port = $port;
+        }
         $this->ip = $ip;
         $this->community = $community;
         $this->timeoutMs = $timeout_ms;
         $this->retries = $retries;
     }
 
-    public function getSnmp() {
+    public function getSnmp()
+    {
         $snmp = new \SNMP(\SNMP::VERSION_2C, $this->ip, $this->community, $this->timeoutMs, $this->retries);
         $snmp->oid_output_format = SNMP_OID_OUTPUT_NUMERIC;
         $snmp->quick_print = true;
@@ -68,7 +74,7 @@ class PhpSnmp implements SnmpInterface
         $snmp = $this->getSnmp();
         while ($objs = $snmp->getnext([$oid])) {
             foreach ($objs as $oid => $obj) {
-                if($checkNext && strpos($oid, $firstOid) === false) {
+                if ($checkNext && strpos($oid, $firstOid) === false) {
                     break(2);
                 }
                 if ($obj->type == 67) {
@@ -86,6 +92,7 @@ class PhpSnmp implements SnmpInterface
         }
         return $response;
     }
+
     /**
      * @param string $oid
      * @return array
@@ -100,11 +107,11 @@ class PhpSnmp implements SnmpInterface
             throw new \Exception($snmp->getError(), $snmp->getErrno());
         }
         foreach ($objs as $oid => $obj) {
-            if($obj->type == 67) {
-                $obj->value  = $this->parseTimeTicks($obj->value);
+            if ($obj->type == 67) {
+                $obj->value = $this->parseTimeTicks($obj->value);
             }
-            if(in_array($obj->type, [2,65,66,70])) {
-                $obj->value = (int) filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
+            if (in_array($obj->type, [2, 65, 66, 70])) {
+                $obj->value = (int)filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
             }
             $response[] = [
                 'oid' => $oid,
@@ -116,19 +123,21 @@ class PhpSnmp implements SnmpInterface
         return $response;
     }
 
-    private function parseTimeTicks($timetick) {
+    private function parseTimeTicks($timetick)
+    {
 
         $data = explode(":", $timetick);
         return
             //Дни
-              (($data[0] * 24 * 60 * 60) +
+            (($data[0] * 24 * 60 * 60) +
                 //Часы
                 ($data[1] * 60 * 60) +
                 //Минуты
                 ($data[2] * 60) +
                 //Секунды
-                ((int)$data[3]) );
+                ((int)$data[3]));
     }
+
     /**
      * @param array $oids
      * @return array
@@ -191,11 +200,11 @@ class PhpSnmp implements SnmpInterface
             throw new \Exception($snmp->getError(), $snmp->getErrno());
         }
 
-        if($obj->type == 67) {
-            $obj->value  = $this->parseTimeTicks($obj->value);
+        if ($obj->type == 67) {
+            $obj->value = $this->parseTimeTicks($obj->value);
         }
-        if(in_array($obj->type, [2,65,66,70])) {
-            $obj->value = (int) filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
+        if (in_array($obj->type, [2, 65, 66, 70])) {
+            $obj->value = (int)filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
         }
         $snmp->close();
         return [
@@ -231,7 +240,7 @@ class PhpSnmp implements SnmpInterface
                 $resp[] = [
                     '_oid' => $oid,
                     'oid' => null,
-                    'type' => null ,
+                    'type' => null,
                     'value' => null,
                     'error' => $err,
                 ];
@@ -250,7 +259,7 @@ class PhpSnmp implements SnmpInterface
      */
     function set(string $oid, string $type, $value)
     {
-        set_error_handler(function($errno, $errstr, $errfile, $errline, $errcontext) {
+        set_error_handler(function ($errno, $errstr, $errfile, $errline, $errcontext) {
             // error was suppressed with the @-operator
             if (0 === error_reporting()) {
                 return false;

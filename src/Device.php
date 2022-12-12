@@ -10,6 +10,7 @@ class Device
     protected $community;
     protected $timeout;
     protected $repeats;
+    protected $port;
 
     public function getArr() {
         return [
@@ -17,14 +18,18 @@ class Device
             'community' => $this->community,
             'timeout' => $this->timeout,
             'repeats' => $this->repeats,
+            'port' => $this->port,
         ];
     }
 
     protected function __construct(){}
 
-    public static function init($ip, $community, $timeout = 2, $repeats = 3) {
+    public static function init($ip, $community, $timeout = 2, $repeats = 3, $port = 161) {
         $obj = new self();
-        return $obj->setIp($ip)->setCommunity($community)->setTimeout($timeout)->setRepeats($repeats);
+        if(!$port) {
+            $port = 161;
+        }
+        return $obj->setIp($ip)->setCommunity($community)->setTimeout($timeout)->setRepeats($repeats)->setPort($port);
     }
 
     /**
@@ -97,6 +102,15 @@ class Device
     {
         $this->repeats = $repeats;
         return $this;
+    }
+
+    function setPort($port) {
+        $this->port = $port;
+        return $this;
+    }
+
+    function getPort() {
+        return $this->port;
     }
 
 
