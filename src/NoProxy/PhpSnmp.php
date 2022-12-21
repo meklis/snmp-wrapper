@@ -53,7 +53,7 @@ class PhpSnmp implements SnmpInterface
 
     public function getSnmp()
     {
-        $snmp = new \SNMP(\SNMP::VERSION_2C, $this->ip, $this->community, $this->timeoutMs, $this->retries);
+        $snmp = new \SNMP(\SNMP::VERSION_2C, "{$this->ip}:{$this->port}", $this->community, $this->timeoutMs, $this->retries);
         $snmp->oid_output_format = SNMP_OID_OUTPUT_NUMERIC;
         $snmp->quick_print = true;
         $snmp->enum_print = true;
