@@ -119,7 +119,7 @@ class MultiWalker implements MultiWalkerInterface
             $req[] = (new Request\PoollerRequest())
                 ->setOid($oid->getOid())
                 ->setUseCache($oid->getUseCache())
-                ->setCommunity($dev->getPubCommunity())
+                ->setCommunity($dev->getPrivateCommunity())
                 ->setIp($dev->getIp())
                 ->setTimeout($timeoutSec !== null ? $timeoutSec : $dev->getTimeout())
                 ->setRepeats($repeats !== null ? $repeats : $dev->getRepeats())

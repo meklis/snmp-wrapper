@@ -146,7 +146,7 @@ class MultiWalker implements MultiWalkerInterface
                     case 'Integer': $type = PhpSnmp::SET_TYPE_INTEGER; break;
                     default: $type = PhpSnmp::SET_TYPE_STRING;
                 }
-                (new PhpSnmp($device->getIp(), $device->getPubCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))
+                (new PhpSnmp($device->getIp(), $device->getPrivateCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))
                     ->set($oid->getOid(), $type, $oid->getValue());
                 $response[] = PoollerResponse::init($device->getIp(), $oid->getOid(), [SnmpResponse::init(
                     $oid->getOid(),
