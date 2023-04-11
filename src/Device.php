@@ -9,14 +9,18 @@ class Device
     protected $ip;
     protected $pubCommunity;
     protected $privateCommunity;
+
+    protected $version = '2c';
+
     protected $timeout;
     protected $repeats;
-    protected $port;
+    protected $port = 161;
 
     public function getArr() {
         return [
             'ip' => $this->ip,
-            'community' => $this->pubCommunity,
+            'pub_community' => $this->pubCommunity,
+            'private_community' => $this->privateCommunity,
             'timeout' => $this->timeout,
             'repeats' => $this->repeats,
             'port' => $this->port,
@@ -25,12 +29,10 @@ class Device
 
     protected function __construct(){}
 
-    public static function init($ip, $pubCommunity, $privateCommunity, $timeout = 2, $repeats = 3, $port = 161) {
+    public static function init($ip, $pubCommunity, $privateCommunity, $timeout = 2, $repeats = 3) {
         $obj = new self();
-        if(!$port) {
-            $port = 161;
-        }
-        return $obj->setIp($ip)->setPubCommunity($pubCommunity)->setPrivateCommunity($privateCommunity)->setTimeout($timeout)->setRepeats($repeats)->setPort($port);
+
+        return $obj->setIp($ip)->setPubCommunity($pubCommunity)->setPrivateCommunity($privateCommunity)->setTimeout($timeout)->setRepeats($repeats);
     }
 
     /**
@@ -131,6 +133,25 @@ class Device
         $this->privateCommunity = $privateCommunity;
         return $this;
     }
+
+    /**
+     * @return string
+     */
+    public function getVersion(): string
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param string $version
+     * @return Device
+     */
+    public function setVersion(string $version): Device
+    {
+        $this->version = $version;
+        return $this;
+    }
+
 
 
 

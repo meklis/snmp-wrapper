@@ -24,6 +24,8 @@ class PhpSnmp implements SnmpInterface
     protected $timeoutMs;
     protected $retries;
 
+    protected $snmpVersion = \SNMP::VERSION_2C;
+
     protected $port = 161;
 
     /**
@@ -51,9 +53,32 @@ class PhpSnmp implements SnmpInterface
         $this->retries = $retries;
     }
 
+    /**
+     * @return int
+     */
+    public function getSnmpVersion(): int
+    {
+        return $this->snmpVersion;
+    }
+
+    /**
+     * @param string $snmpVersion
+     */
+    public function setSnmpVersion(string $snmpVersion)
+    {
+        switch ($snmpVersion) {
+            case '1'; $this->snmpVersion = \SNMP::VERSION_1; break;
+            case '2'; $this->snmpVersion = \SNMP::VERSION_2c; break;
+            case '2c'; $this->snmpVersion = \SNMP::VERSION_2c; break;
+            case '3':  $this->snmpVersion = \SNMP::VERSION_3; break;
+        }
+        return $this;
+    }
+
+
     public function getSnmp()
     {
-        $snmp = new \SNMP(\SNMP::VERSION_2C, "{$this->ip}:{$this->port}", $this->community, $this->timeoutMs, $this->retries);
+        $snmp = new \SNMP($this->snmpVersion, "{$this->ip}:{$this->port}", $this->community, $this->timeoutMs, $this->retries);
         $snmp->oid_output_format = SNMP_OID_OUTPUT_NUMERIC;
         $snmp->quick_print = true;
         $snmp->enum_print = true;
