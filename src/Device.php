@@ -7,7 +7,8 @@ namespace SnmpWrapper;
 class Device
 {
     protected $ip;
-    protected $community;
+    protected $pubCommunity;
+    protected $privateCommunity;
     protected $timeout;
     protected $repeats;
     protected $port;
@@ -15,7 +16,7 @@ class Device
     public function getArr() {
         return [
             'ip' => $this->ip,
-            'community' => $this->community,
+            'community' => $this->pubCommunity,
             'timeout' => $this->timeout,
             'repeats' => $this->repeats,
             'port' => $this->port,
@@ -24,12 +25,12 @@ class Device
 
     protected function __construct(){}
 
-    public static function init($ip, $community, $timeout = 2, $repeats = 3, $port = 161) {
+    public static function init($ip, $pubCommunity, $privateCommunity, $timeout = 2, $repeats = 3, $port = 161) {
         $obj = new self();
         if(!$port) {
             $port = 161;
         }
-        return $obj->setIp($ip)->setCommunity($community)->setTimeout($timeout)->setRepeats($repeats)->setPort($port);
+        return $obj->setIp($ip)->setPubCommunity($pubCommunity)->setPrivateCommunity($privateCommunity)->setTimeout($timeout)->setRepeats($repeats)->setPort($port);
     }
 
     /**
@@ -53,18 +54,18 @@ class Device
     /**
      * @return mixed
      */
-    public function getCommunity()
+    public function getPubCommunity()
     {
-        return $this->community;
+        return $this->pubCommunity;
     }
 
     /**
-     * @param mixed $community
+     * @param mixed $pubCommunity
      * @return Device
      */
-    protected function setCommunity($community)
+    protected function setPubCommunity($pubCommunity)
     {
-        $this->community = $community;
+        $this->pubCommunity = $pubCommunity;
         return $this;
     }
 
@@ -112,6 +113,25 @@ class Device
     function getPort() {
         return $this->port;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPrivateCommunity()
+    {
+        return $this->privateCommunity;
+    }
+
+    /**
+     * @param mixed $privateCommunity
+     * @return Device
+     */
+    public function setPrivateCommunity($privateCommunity)
+    {
+        $this->privateCommunity = $privateCommunity;
+        return $this;
+    }
+
 
 
 }
