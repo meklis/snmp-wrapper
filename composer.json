@@ -15,7 +15,7 @@
         }
     },
     "require": {
-        "guzzlehttp/guzzle": "dev-master",
+        "guzzlehttp/guzzle": "7.5.x-dev",
         "karriere/json-decoder": "^2.2"
     },
     "scripts": {
