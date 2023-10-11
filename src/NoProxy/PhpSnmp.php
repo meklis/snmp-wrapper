@@ -100,7 +100,7 @@ class PhpSnmp implements SnmpInterface
         $snmp = $this->getSnmp();
         while ($objs = $snmp->getnext([$oid])) {
             foreach ($objs as $oid => $obj) {
-                if ($checkNext && strpos($oid, $firstOid) === false) {
+                if ($checkNext && strpos($oid, $firstOid . ".") === false) {
                     break(2);
                 }
                 if ($obj->type == 67) {
