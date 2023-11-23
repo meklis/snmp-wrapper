@@ -28,6 +28,21 @@ class PhpSnmp implements SnmpInterface
 
     protected $port = 161;
 
+    protected $walkNextSleep = 0;
+
+    public function getWalkNextSleep(): int
+    {
+        return $this->walkNextSleep;
+    }
+
+    public function setWalkNextSleep(int $walkNextSleep): PhpSnmp
+    {
+        $this->walkNextSleep = $walkNextSleep;
+        return $this;
+    }
+
+
+
     /**
      * PhpSnmp constructor.
      * @param string $ip
@@ -114,6 +129,9 @@ class PhpSnmp implements SnmpInterface
                     'type' => $this->types[$obj->type],
                     'value' => trim($obj->value, '"'),
                 ];
+            }
+            if($this->walkNextSleep != 0) {
+                usleep($this->walkNextSleep);
             }
         }
         return $response;

@@ -44,7 +44,7 @@ interface MultiWalkerInterface
      * @param $repeats
      * @return PoollerResponse[]
      */
-    function walkNext(array $oids, $timeoutSec = null, $repeats = null);
+    function walkNext(array $oids, $timeoutSec = null, $repeats = null, $walkNextSleep = 0);
 
     /**
      * @param Oid[] $oids
