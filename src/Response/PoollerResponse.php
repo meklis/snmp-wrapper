@@ -68,7 +68,7 @@ class PoollerResponse
         return $this;
     }
 
-    public static function init($deviceIp, $oid, $response = null, $error = null) {
+    public static function init($deviceIp, $oid, $response = null, ?string $error = null) {
         $obj = new self();
         $obj->ip = $deviceIp;
         $obj->oid = $oid;
