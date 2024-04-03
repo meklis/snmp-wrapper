@@ -114,6 +114,7 @@ class PhpSnmp implements SnmpInterface
         $firstOid = $oid;
         $snmp = $this->getSnmp();
         while ($objs = $snmp->getnext([$oid])) {
+
             foreach ($objs as $oid => $obj) {
                 if ($checkNext && strpos($oid, $firstOid . ".") === false) {
                     break(2);
@@ -123,6 +124,9 @@ class PhpSnmp implements SnmpInterface
                 }
                 if (in_array($obj->type, [2, 65, 66, 70])) {
                     $obj->value = (int)filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
+                }
+                if(strpos($obj->value, "\\\"") != false) {
+                    $obj->value = str_replace(["\\"], "", $obj->value);
                 }
                 $response[] = [
                     'oid' => $oid,
@@ -156,6 +160,9 @@ class PhpSnmp implements SnmpInterface
             }
             if (in_array($obj->type, [2, 65, 66, 70])) {
                 $obj->value = (int)filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
+            }
+            if(strpos($obj->value, "\\\"") != false) {
+                $obj->value = str_replace(["\\"], "", $obj->value);
             }
             $response[] = [
                 'oid' => $oid,
@@ -251,6 +258,10 @@ class PhpSnmp implements SnmpInterface
             $obj->value = (int)filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
         }
         $snmp->close();
+
+        if(strpos($obj->value, "\\\"") != false) {
+            $obj->value = str_replace(["\\"], "", $obj->value);
+        }
         return [
             'oid' => $oid,
             'type' => $this->types[$obj->type],
