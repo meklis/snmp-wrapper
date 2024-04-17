@@ -125,13 +125,17 @@ class PhpSnmp implements SnmpInterface
                 if (in_array($obj->type, [2, 65, 66, 70])) {
                     $obj->value = (int)filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
                 }
+                $obj->value = trim($obj->value, '"');
                 if(strpos($obj->value, "\\\"") != false) {
                     $obj->value = str_replace(["\\"], "", $obj->value);
+                }
+                if(strpos($obj->value, "\\\\") != false) {
+                    $obj->value = str_replace(["\\\\"], "\\", $obj->value);
                 }
                 $response[] = [
                     'oid' => $oid,
                     'type' => $this->types[$obj->type],
-                    'value' => trim($obj->value, '"'),
+                    'value' => $obj->value,
                 ];
             }
             if($this->walkNextSleep != 0) {
@@ -161,13 +165,18 @@ class PhpSnmp implements SnmpInterface
             if (in_array($obj->type, [2, 65, 66, 70])) {
                 $obj->value = (int)filter_var($obj->value, FILTER_SANITIZE_NUMBER_INT);
             }
+
+            $obj->value = trim($obj->value, '"');
             if(strpos($obj->value, "\\\"") != false) {
                 $obj->value = str_replace(["\\"], "", $obj->value);
+            }
+            if(strpos($obj->value, "\\\\") != false) {
+                $obj->value = str_replace(["\\\\"], "\\", $obj->value);
             }
             $response[] = [
                 'oid' => $oid,
                 'type' => $this->types[$obj->type],
-                'value' => trim($obj->value, '"'),
+                'value' => $obj->value,
             ];
         }
         $snmp->close();
@@ -259,13 +268,17 @@ class PhpSnmp implements SnmpInterface
         }
         $snmp->close();
 
+        $obj->value = trim($obj->value, '"');
         if(strpos($obj->value, "\\\"") != false) {
             $obj->value = str_replace(["\\"], "", $obj->value);
+        }
+        if(strpos($obj->value, "\\\\") != false) {
+            $obj->value = str_replace(["\\\\"], "\\", $obj->value);
         }
         return [
             'oid' => $oid,
             'type' => $this->types[$obj->type],
-            'value' => trim($obj->value, '"'),
+            'value' => $obj->value,
         ];
     }
 
