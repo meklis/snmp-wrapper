@@ -28,6 +28,8 @@ class PhpSnmp implements SnmpInterface
 
     protected $port = 161;
 
+    protected $oid_increasing_check = true;
+
     protected $walkNextSleep = 0;
 
     public function getWalkNextSleep(): int
@@ -90,6 +92,11 @@ class PhpSnmp implements SnmpInterface
         return $this;
     }
 
+    public function setOidIncreasingCheck(bool $oid_increasing_check) {
+        $this->oid_increasing_check = $oid_increasing_check;
+        return $this;
+    }
+
 
     public function getSnmp()
     {
@@ -97,7 +104,7 @@ class PhpSnmp implements SnmpInterface
         $snmp->oid_output_format = SNMP_OID_OUTPUT_NUMERIC;
         $snmp->quick_print = true;
         $snmp->enum_print = true;
-        $snmp->oid_increasing_check = true;
+        $snmp->oid_increasing_check = $this->oid_increasing_check;
         $snmp->valueretrieval = SNMP_VALUE_OBJECT;
         $snmp->exceptions_enabled = \SNMP::ERRNO_ANY;
         return $snmp;

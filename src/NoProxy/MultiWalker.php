@@ -37,6 +37,12 @@ class MultiWalker implements MultiWalkerInterface
         $this->devices = [];
     }
 
+    protected $oid_increasing_check = true;
+
+    public function setOidIncreasingCheck(bool $oid_increasing_check) {
+        $this->oid_increasing_check = $oid_increasing_check;
+    }
+
     /**
      * @param Oid[] $oids
      * @return string[]
@@ -58,7 +64,9 @@ class MultiWalker implements MultiWalkerInterface
         foreach ($this->devices as $device) {
             $timeout = $timeoutSec !== null ? $timeoutSec : $device->getTimeout();
             $countRepeats = $repeats !== null ? $repeats : $device->getRepeats();
-            $oidResponses = (new PhpSnmp($device->getIp(), $device->getPubCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))->setSnmpVersion($device->getVersion())->multiWalk($this->getOidFromObjs($oids));
+            $oidResponses = (new PhpSnmp($device->getIp(), $device->getPubCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))
+                ->setSnmpVersion($device->getVersion())->setOidIncreasingCheck($this->oid_increasing_check)
+                ->multiWalk($this->getOidFromObjs($oids));
             foreach ($oidResponses as $data) {
                 $pooller = PoollerResponse::init($device->getIp(), $data['oid'], null, $data['error']);
                 if (!$data['error']) {
@@ -120,7 +128,9 @@ class MultiWalker implements MultiWalkerInterface
         foreach ($this->devices as $device) {
             $timeout = $timeoutSec !== null ? $timeoutSec : $device->getTimeout();
             $countRepeats = $repeats !== null ? $repeats : $device->getRepeats();
-            $oidResponses = (new PhpSnmp($device->getIp(), $device->getPubCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))->setSnmpVersion($device->getVersion())->multiGet($this->getOidFromObjs($oids));
+            $oidResponses = (new PhpSnmp($device->getIp(), $device->getPubCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))
+                ->setSnmpVersion($device->getVersion())->setOidIncreasingCheck($this->oid_increasing_check)
+                ->multiGet($this->getOidFromObjs($oids));
 
             foreach ($oidResponses as $data) {
                 if(!$data['oid']) $data['oid'] = $data['_oid'];
@@ -147,7 +157,7 @@ class MultiWalker implements MultiWalkerInterface
                     default: $type = PhpSnmp::SET_TYPE_STRING;
                 }
                 (new PhpSnmp($device->getIp(), $device->getPrivateCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))
-                    ->setSnmpVersion($device->getVersion())
+                    ->setSnmpVersion($device->getVersion())->setOidIncreasingCheck($this->oid_increasing_check)
                     ->set($oid->getOid(), $type, $oid->getValue());
                 $response[] = PoollerResponse::init($device->getIp(), $oid->getOid(), [SnmpResponse::init(
                     $oid->getOid(),
@@ -168,7 +178,9 @@ class MultiWalker implements MultiWalkerInterface
         foreach ($this->devices as $device) {
             $timeout = $timeoutSec !== null ? $timeoutSec : $device->getTimeout();
             $countRepeats = $repeats !== null ? $repeats : $device->getRepeats();
-            $oidResponses = (new PhpSnmp($device->getIp(), $device->getPubCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))->setWalkNextSleep($walkNextSleep)->setSnmpVersion($device->getVersion())->multiWalkNext($this->getOidFromObjs($oids));
+            $oidResponses = (new PhpSnmp($device->getIp(), $device->getPubCommunity(), $timeout * 1000, $countRepeats, $device->getPort()))
+                ->setWalkNextSleep($walkNextSleep)->setSnmpVersion($device->getVersion())->setOidIncreasingCheck($this->oid_increasing_check)
+                ->multiWalkNext($this->getOidFromObjs($oids));
             foreach ($oidResponses as $data) {
                 $pooller = PoollerResponse::init($device->getIp(), $data['oid'], null, $data['error']);
                 if (!$data['error']) {
