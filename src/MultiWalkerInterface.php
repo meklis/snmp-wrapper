@@ -27,6 +27,11 @@ interface MultiWalkerInterface
     function flushDevices();
 
     /**
+     * 
+     */
+    public function setOidIncreasingCheck(bool $oid_increasing_check);
+
+    /**
      * @param Oid[] $oids
      * @return PoollerResponse[]
      */

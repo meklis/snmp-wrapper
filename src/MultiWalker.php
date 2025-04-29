@@ -48,6 +48,10 @@ class MultiWalker implements MultiWalkerInterface
         return $this;
     }
 
+    public function setOidIncreasingCheck(bool $oid_increasing_check) {
+        throw new \Exception('setOidIncreasingCheck() not implemented in MultiWalker.php');
+    }
+
     /**
      * @param Device[] $devices
      * @throws \Exception

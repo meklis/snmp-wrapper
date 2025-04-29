@@ -47,6 +47,11 @@ class MultiWalker implements MultiWalkerInterface
         }
         return $ois;
     }
+
+    public function setOidIncreasingCheck(bool $oid_increasing_check) {
+        throw new \Exception('setOidIncreasingCheck() not implemented in SnmpT/MultiWalker.php');
+    }
+
     /**
      * @param Oid[] $oids
      * @return PoollerResponse[]
