@@ -9,6 +9,7 @@ class PhpSnmp implements SnmpInterface
     protected $types = [
         2 => 'Integer',
         4 => 'String',
+        5 => 'NULL',
         6 => 'OID',
         65 => 'Integer',
         66 => 'Integer',
