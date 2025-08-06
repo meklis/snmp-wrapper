@@ -33,6 +33,17 @@ class PhpSnmp implements SnmpInterface
 
     protected $walkNextSleep = 0;
 
+    const IS_DEBUG = false;
+
+    protected function debug($type, $oid)
+    {
+        if(!self::IS_DEBUG) {
+            return;
+        }
+        echo "$type $oid\n";
+        $this->printFormattedBacktrace();
+    }
+
     public function getWalkNextSleep(): int
     {
         return $this->walkNextSleep;
@@ -118,6 +129,7 @@ class PhpSnmp implements SnmpInterface
      */
     function walkNext(string $oid, $checkNext = true)
     {
+        $this->debug('walkNext', $oid);
         $response = [];
         $firstOid = $oid;
         $snmp = $this->getSnmp();
@@ -152,7 +164,17 @@ class PhpSnmp implements SnmpInterface
         }
         return $response;
     }
-
+    function printFormattedBacktrace() {
+        $trace = debug_backtrace();
+        foreach ($trace as $index => $frame) {
+            $file = $frame['file'] ?? '[internal function]';
+            $line = $frame['line'] ?? '';
+            $function = $frame['function'] ?? '';
+            $class = $frame['class'] ?? '';
+            $type = $frame['type'] ?? '';
+            echo "#$index $file($line): $class$type$function()\n";
+        }
+    }
     /**
      * @param string $oid
      * @return array
@@ -161,6 +183,8 @@ class PhpSnmp implements SnmpInterface
     function walk(string $oid)
     {
         $snmp = $this->getSnmp();
+        $this->debug('walk', $oid);
+        $this->printFormattedBacktrace();
         $response = [];
         $objs = @$snmp->walk($oid);
         if (!$objs) {
@@ -262,6 +286,7 @@ class PhpSnmp implements SnmpInterface
      */
     function get(string $oid)
     {
+        $this->debug('get', $oid);
         $snmp = $this->getSnmp();
         $obj = @$snmp->get($oid);
         if (!$obj) {
