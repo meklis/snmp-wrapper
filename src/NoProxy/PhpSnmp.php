@@ -184,7 +184,6 @@ class PhpSnmp implements SnmpInterface
     {
         $snmp = $this->getSnmp();
         $this->debug('walk', $oid);
-        $this->printFormattedBacktrace();
         $response = [];
         $objs = @$snmp->walk($oid);
         if (!$objs) {
